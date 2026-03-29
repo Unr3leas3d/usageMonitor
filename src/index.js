@@ -4,16 +4,20 @@ import { getSnapshot } from "./snapshot.js";
 import { runTui } from "./tui.js";
 import { installClaudeStatusline, uninstallClaudeStatusline } from "./install-claude-statusline.js";
 import { formatResetCountdown } from "./utils.js";
+import { runInit } from "./init.js";
+import { runUninstall } from "./uninstall.js";
 
 function helpText() {
   return `usage-monitor
 
 Commands:
-  usage-monitor tui
-  usage-monitor tmux-status [--max-age=<ms>] [--no-cache]
-  usage-monitor snapshot [--json]
-  usage-monitor install-claude-statusline
-  usage-monitor uninstall-claude-statusline
+  usage-monitor init                              Interactive setup wizard
+  usage-monitor uninstall                         Interactive teardown
+  usage-monitor tui                               Terminal dashboard
+  usage-monitor tmux-status [--max-age=<ms>] [--no-cache]  Tmux status line
+  usage-monitor snapshot [--json]                  Snapshot of active agents
+  usage-monitor install-claude-statusline          Install Claude bridge (non-interactive)
+  usage-monitor uninstall-claude-statusline         Remove Claude bridge (non-interactive)
 `;
 }
 
@@ -83,6 +87,14 @@ async function main() {
       process.stdout.write(renderTmuxStatus(snapshot));
       return;
     }
+
+    case "init":
+      await runInit();
+      return;
+
+    case "uninstall":
+      await runUninstall();
+      return;
 
     case "tui":
       await runTui();
