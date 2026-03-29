@@ -1,0 +1,6 @@
+.claude/
+docs/
+tests/
+node-compile-cache/
+.DS_Store
+*.log

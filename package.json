@@ -4,7 +4,7 @@
   "description": "Monitor live Claude Code and Codex sessions — TUI dashboard, tmux integration, and usage tracking.",
   "type": "module",
   "bin": {
-    "vibe-meter": "./src/index.js"
+    "vibe-meter": "src/index.js"
   },
   "scripts": {
     "test": "node --test",

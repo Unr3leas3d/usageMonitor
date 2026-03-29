@@ -1,6 +1,14 @@
 # vibe-meter
 
-A Node.js CLI that monitors live Claude Code and Codex sessions from the terminal.
+A Node.js CLI that monitors live **Claude Code** and **Codex** sessions from the terminal. Provides a TUI dashboard, tmux status bar integration, and a Claude statusline bridge for rate-limit data.
+
+## Features
+
+- **TUI Dashboard** — interactive terminal UI showing all active AI coding sessions
+- **Tmux Integration** — live usage stats in your tmux status bar
+- **Claude Statusline Bridge** — captures 5h and 7d rate-limit data from Claude Code
+- **Codex Support** — discovers and monitors Codex sessions via SQLite logs
+- **JSON Snapshots** — machine-readable output for scripting and tooling
 
 ## Requirements
 
@@ -8,16 +16,30 @@ A Node.js CLI that monitors live Claude Code and Codex sessions from the termina
 - macOS or Linux
 - Claude Code >= 2.1.80 (for rate-limit data)
 
-## Quick Start
+## Install
+
+### From npm
+
+```bash
+npm install -g vibe-meter
+```
+
+### From source
 
 ```bash
 git clone https://github.com/Unr3leas3d/usageMonitor.git
 cd usageMonitor
 npm install
-node ./src/index.js init
+npm link
 ```
 
-The interactive setup wizard will walk you through:
+Then run the interactive setup wizard:
+
+```bash
+vibe-meter init
+```
+
+The wizard walks you through:
 
 1. **Claude statusline bridge** — live 5h and 7d usage data from Claude Code
 2. **Tmux integration** — usage stats in your tmux status bar
@@ -26,21 +48,18 @@ The interactive setup wizard will walk you through:
 ## Commands
 
 ```bash
-# Interactive setup / teardown
-vibe-meter init
-vibe-meter uninstall
+vibe-meter init                          # Interactive setup wizard
+vibe-meter uninstall                     # Interactive teardown
 
-# Terminal dashboard
-vibe-meter tui
+vibe-meter tui                           # Interactive terminal dashboard
+vibe-meter tmux-status                   # One-line status for tmux status bar
+vibe-meter snapshot --json               # JSON snapshot of all active agents
 
-# Tmux status bar output
-vibe-meter tmux-status
-
-# JSON snapshot of all active agents
-vibe-meter snapshot --json
+vibe-meter install-claude-statusline     # Install Claude statusline bridge
+vibe-meter uninstall-claude-statusline   # Remove the bridge
 ```
 
-If you haven't run `vibe-meter init` to set up the global command, prefix with `node ./src/index.js`:
+If you haven't set up the global command, prefix with `node ./src/index.js`:
 
 ```bash
 node ./src/index.js tui
@@ -48,12 +67,12 @@ node ./src/index.js tui
 
 ## Manual Setup
 
-If you prefer to set things up individually instead of using `init`:
+If you prefer to configure things individually instead of using `init`:
 
 ### Claude Statusline Bridge
 
 ```bash
-node ./src/index.js install-claude-statusline
+vibe-meter install-claude-statusline
 ```
 
 Claude Code must be `2.1.80` or newer for the status line to include `rate_limits`. This preserves your prior Claude status line command and restores it on uninstall.
@@ -73,6 +92,32 @@ Then reload tmux:
 tmux source-file ~/.tmux.conf
 ```
 
+## Architecture
+
+| File | Purpose |
+|------|---------|
+| `src/index.js` | CLI entrypoint and command routing |
+| `src/snapshot.js` | Builds/caches snapshots of all active agents |
+| `src/collectors/claude.js` | Discovers Claude sessions via `ps`, reads JSONL transcripts |
+| `src/collectors/codex.js` | Discovers Codex sessions via SQLite logs |
+| `src/inference.js` | Infers agent state (thinking/typing/reading/idle) |
+| `src/tui.js` | Terminal UI dashboard |
+| `src/tmux.js` | Tmux config helpers |
+| `src/init.js` | Interactive setup wizard |
+| `src/uninstall.js` | Interactive teardown wizard |
+| `src/install-claude-statusline.js` | Claude statusline bridge installer |
+| `src/processes.js` | Process/file discovery via `ps` and `lsof` |
+| `src/paths.js` | Platform-aware path helpers |
+| `src/cache.js` | JSON file read/write and snapshot caching |
+| `src/jsonl.js` | Efficient tail-reading of JSONL transcripts |
+| `src/utils.js` | Pure utility functions |
+
+## Running Tests
+
+```bash
+node --test
+```
+
 ## Uninstall
 
 ```bash
@@ -81,8 +126,6 @@ vibe-meter uninstall
 
 This interactively removes the Claude bridge, tmux config block, and global command.
 
-## Running Tests
+## License
 
-```bash
-node --test
-```
+MIT
