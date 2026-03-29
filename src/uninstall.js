@@ -78,8 +78,7 @@ async function stepGlobalCommand() {
   const s = spinner();
   s.start("Running npm unlink...");
   try {
-    execFileSync("npm", ["unlink"], {
-      cwd: import.meta.dirname,
+    execFileSync("npm", ["rm", "-g", "vibe-meter"], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
     });
