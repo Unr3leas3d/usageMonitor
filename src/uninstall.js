@@ -76,16 +76,28 @@ async function stepGlobalCommand() {
   if (!answer) { return "skipped"; }
 
   const s = spinner();
-  s.start("Running npm unlink...");
+  s.start("Removing global command...");
   try {
-    execFileSync("npm", ["rm", "-g", "vibe-meter"], {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    try {
+      execFileSync("npm", ["rm", "-g", "vibe-meter"], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+    } catch (error) {
+      if (error.message?.includes("EACCES")) {
+        s.message("Retrying with sudo (you may be prompted for your password)...");
+        execFileSync("sudo", ["npm", "rm", "-g", "vibe-meter"], {
+          encoding: "utf8",
+          stdio: ["inherit", "pipe", "pipe"],
+        });
+      } else {
+        throw error;
+      }
+    }
     s.stop("Global command removed.");
     return "removed";
   } catch (error) {
-    s.stop("Failed to unlink global command.");
+    s.stop("Failed to remove global command.");
     log.error(error.message);
     return "failed";
   }

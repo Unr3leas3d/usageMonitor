@@ -130,13 +130,26 @@ async function stepGlobalCommand() {
   if (!answer) { return "skipped"; }
 
   const s = spinner();
-  s.start("Running npm link...");
+  s.start("Linking global command...");
   try {
-    execFileSync("npm", ["link"], {
-      cwd: import.meta.dirname,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    try {
+      execFileSync("npm", ["link"], {
+        cwd: import.meta.dirname,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+    } catch (error) {
+      if (error.message?.includes("EACCES")) {
+        s.message("Retrying with sudo (you may be prompted for your password)...");
+        execFileSync("sudo", ["npm", "link"], {
+          cwd: import.meta.dirname,
+          encoding: "utf8",
+          stdio: ["inherit", "pipe", "pipe"],
+        });
+      } else {
+        throw error;
+      }
+    }
     s.stop("Global command installed.");
     log.success("You can now run `vibe-meter` from anywhere.");
     return "installed";
