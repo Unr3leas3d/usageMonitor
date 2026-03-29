@@ -30,13 +30,7 @@ npm install -g vibe-meter
 git clone https://github.com/Unr3leas3d/usageMonitor.git
 cd usageMonitor
 npm install
-npm link
-```
-
-Then run the interactive setup wizard:
-
-```bash
-vibe-meter init
+node ./src/index.js init
 ```
 
 The wizard walks you through:
