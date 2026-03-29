@@ -6,12 +6,14 @@ import { installClaudeStatusline, uninstallClaudeStatusline } from "./install-cl
 import { formatResetCountdown } from "./utils.js";
 import { runInit } from "./init.js";
 import { runUninstall } from "./uninstall.js";
+import { runUpdate } from "./update.js";
 
 function helpText() {
   return `vibe-meter
 
 Commands:
   vibe-meter init                              Interactive setup wizard
+  vibe-meter update                            Self-update (auto-detects install method)
   vibe-meter uninstall                         Interactive teardown
   vibe-meter tui                               Terminal dashboard
   vibe-meter tmux-status [--max-age=<ms>] [--no-cache]  Tmux status line
@@ -87,6 +89,10 @@ async function main() {
       process.stdout.write(renderTmuxStatus(snapshot));
       return;
     }
+
+    case "update":
+      await runUpdate();
+      return;
 
     case "init":
       await runInit();

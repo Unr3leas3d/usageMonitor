@@ -49,6 +49,7 @@ The wizard walks you through:
 
 ```bash
 vibe-meter init                          # Interactive setup wizard
+vibe-meter update                        # Self-update (auto-detects install method)
 vibe-meter uninstall                     # Interactive teardown
 
 vibe-meter tui                           # Interactive terminal dashboard
