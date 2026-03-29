@@ -1,0 +1,19 @@
+{
+  "name": "usage-monitor",
+  "version": "0.1.0",
+  "description": "Tmux-friendly monitor for Claude Code and Codex usage and live agents.",
+  "type": "module",
+  "bin": {
+    "usage-monitor": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "snapshot": "node ./src/index.js snapshot --json",
+    "tui": "node ./src/index.js tui",
+    "tmux-status": "node ./src/index.js tmux-status"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}
