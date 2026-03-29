@@ -39,7 +39,7 @@ describe("detectTmuxBlock", () => {
     const confPath = path.join(tmpDir, ".tmux.conf");
     fs.writeFileSync(
       confPath,
-      `set -g mouse on\n${TMUX_BLOCK_START}\nset -g status-right '#(usage-monitor tmux-status)'\n${TMUX_BLOCK_END}\n`
+      `set -g mouse on\n${TMUX_BLOCK_START}\nset -g status-right '#(vibe-meter tmux-status)'\n${TMUX_BLOCK_END}\n`
     );
     assert.equal(detectTmuxBlock(confPath), true);
   });
@@ -66,7 +66,7 @@ describe("hasExistingStatusRight", () => {
     const confPath = path.join(tmpDir, ".tmux.conf");
     fs.writeFileSync(
       confPath,
-      `${TMUX_BLOCK_START}\nset -g status-right '#(usage-monitor tmux-status)'\n${TMUX_BLOCK_END}\n`
+      `${TMUX_BLOCK_START}\nset -g status-right '#(vibe-meter tmux-status)'\n${TMUX_BLOCK_END}\n`
     );
     assert.equal(hasExistingStatusRight(confPath), false);
   });
@@ -94,7 +94,7 @@ describe("appendTmuxBlock", () => {
     appendTmuxBlock(confPath);
     const content = fs.readFileSync(confPath, "utf8");
     assert.ok(content.includes(TMUX_BLOCK_START));
-    assert.ok(content.includes("usage-monitor tmux-status"));
+    assert.ok(content.includes("vibe-meter tmux-status"));
     assert.ok(content.includes(TMUX_BLOCK_END));
     assert.ok(content.startsWith("set -g mouse on\n"));
   });
@@ -104,7 +104,7 @@ describe("appendTmuxBlock", () => {
     appendTmuxBlock(confPath);
     const content = fs.readFileSync(confPath, "utf8");
     assert.ok(content.includes(TMUX_BLOCK_START));
-    assert.ok(content.includes("usage-monitor tmux-status"));
+    assert.ok(content.includes("vibe-meter tmux-status"));
   });
 });
 
@@ -113,13 +113,13 @@ describe("removeTmuxBlock", () => {
     const confPath = path.join(tmpDir, ".tmux.conf");
     fs.writeFileSync(
       confPath,
-      `set -g mouse on\n${TMUX_BLOCK_START}\nset -g status-right '#(usage-monitor tmux-status)'\nset -g status-interval 2\n${TMUX_BLOCK_END}\nset -g base-index 1\n`
+      `set -g mouse on\n${TMUX_BLOCK_START}\nset -g status-right '#(vibe-meter tmux-status)'\nset -g status-interval 2\n${TMUX_BLOCK_END}\nset -g base-index 1\n`
     );
     const removed = removeTmuxBlock(confPath);
     assert.equal(removed, true);
     const content = fs.readFileSync(confPath, "utf8");
     assert.ok(!content.includes(TMUX_BLOCK_START));
-    assert.ok(!content.includes("usage-monitor"));
+    assert.ok(!content.includes("vibe-meter"));
     assert.ok(content.includes("set -g mouse on"));
     assert.ok(content.includes("set -g base-index 1"));
   });

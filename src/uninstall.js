@@ -43,7 +43,7 @@ async function stepTmux() {
     return "skipped";
   }
 
-  const answer = await confirm({ message: "Remove usage-monitor from tmux.conf?" });
+  const answer = await confirm({ message: "Remove vibe-meter from tmux.conf?" });
   if (isCancel(answer)) { cancelled(); }
   if (!answer) { return "skipped"; }
 
@@ -71,7 +71,7 @@ async function stepTmux() {
 }
 
 async function stepGlobalCommand() {
-  const answer = await confirm({ message: "Remove the global usage-monitor command?" });
+  const answer = await confirm({ message: "Remove the global vibe-meter command?" });
   if (isCancel(answer)) { cancelled(); }
   if (!answer) { return "skipped"; }
 
@@ -106,7 +106,7 @@ function formatSummary(results) {
 }
 
 export async function runUninstall() {
-  intro("usage-monitor uninstall");
+  intro("vibe-meter uninstall");
 
   const results = {};
   results["Claude bridge"] = await stepClaudeBridge();

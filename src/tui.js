@@ -165,7 +165,7 @@ function renderFrame(snapshot, selectedIndex, showRaw) {
 
   const lines = [
     "\x1b[2J\x1b[H",
-    color("usage-monitor", ANSI.bold),
+    color("vibe-meter", ANSI.bold),
     `${renderRuntimeSummary("Claude", snapshot.aggregateUsage.claude)} | ${renderRuntimeSummary("Codex", snapshot.aggregateUsage.codex)} | active ${snapshot.agents.length} | refreshed ${new Date(snapshot.refreshedAt).toLocaleTimeString()}`,
     color("Keys: q quit | j/k or arrows move | r refresh | o toggle raw sources", ANSI.dim),
     ""

@@ -5,11 +5,11 @@ import { execFileSync } from "node:child_process";
 
 import { pathExists } from "./paths.js";
 
-export const TMUX_BLOCK_START = "# usage-monitor (auto-installed)";
-export const TMUX_BLOCK_END = "# /usage-monitor";
+export const TMUX_BLOCK_START = "# vibe-meter (auto-installed)";
+export const TMUX_BLOCK_END = "# /vibe-meter";
 
 const TMUX_BLOCK_BODY = [
-  "set -g status-right '#(usage-monitor tmux-status)'",
+  "set -g status-right '#(vibe-meter tmux-status)'",
   "set -g status-interval 2",
 ].join("\n");
 

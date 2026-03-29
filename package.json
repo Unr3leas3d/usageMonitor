@@ -1,10 +1,10 @@
 {
-  "name": "usage-monitor",
+  "name": "vibe-meter",
   "version": "0.1.0",
-  "description": "Tmux-friendly monitor for Claude Code and Codex usage and live agents.",
+  "description": "Monitor live Claude Code and Codex sessions — TUI dashboard, tmux integration, and usage tracking.",
   "type": "module",
   "bin": {
-    "usage-monitor": "./src/index.js"
+    "vibe-meter": "./src/index.js"
   },
   "scripts": {
     "test": "node --test",

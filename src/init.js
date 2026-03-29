@@ -23,12 +23,12 @@ function detectClaudeBridge() {
   const { settingsPath, localStatuslineScriptPath } = getClaudePaths();
   const settings = loadJsonFile(settingsPath, {});
   const command = settings.statusLine?.command || "";
-  return command.includes("usage-monitor-statusline");
+  return command.includes("vibe-meter-statusline");
 }
 
 function detectGlobalCommand() {
   try {
-    execFileSync("which", ["usage-monitor"], {
+    execFileSync("which", ["vibe-meter"], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -70,7 +70,7 @@ async function stepTmux() {
   const blockExists = detectTmuxBlock(confPath);
   const prompt = blockExists
     ? "Tmux integration is already configured. Reinstall?"
-    : "Add usage-monitor to your tmux status bar?";
+    : "Add vibe-meter to your tmux status bar?";
 
   const answer = await confirm({ message: prompt });
   if (isCancel(answer)) { cancelled(); }
@@ -122,8 +122,8 @@ async function stepTmux() {
 async function stepGlobalCommand() {
   const available = detectGlobalCommand();
   const prompt = available
-    ? "usage-monitor is already on your PATH. Reinstall?"
-    : "Make usage-monitor available as a global command?";
+    ? "vibe-meter is already on your PATH. Reinstall?"
+    : "Make vibe-meter available as a global command?";
 
   const answer = await confirm({ message: prompt });
   if (isCancel(answer)) { cancelled(); }
@@ -138,7 +138,7 @@ async function stepGlobalCommand() {
       stdio: ["ignore", "pipe", "pipe"],
     });
     s.stop("Global command installed.");
-    log.success("You can now run `usage-monitor` from anywhere.");
+    log.success("You can now run `vibe-meter` from anywhere.");
     return "installed";
   } catch (error) {
     s.stop("Failed to link global command.");
@@ -161,7 +161,7 @@ function formatSummary(results) {
 }
 
 export async function runInit() {
-  intro("usage-monitor setup");
+  intro("vibe-meter setup");
 
   const results = {};
   results["Claude bridge"] = await stepClaudeBridge();

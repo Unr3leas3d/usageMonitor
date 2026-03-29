@@ -1,15 +1,17 @@
-# usage-monitor
+# vibe-meter
 
-A zero-dependency Node.js CLI that monitors live Claude Code and Codex sessions from the terminal. Provides a TUI dashboard, tmux status bar integration, and a Claude statusline bridge for rate-limit data.
+A Node.js CLI that monitors live Claude Code and Codex sessions from the terminal. Provides a TUI dashboard, tmux status bar integration, and a Claude statusline bridge for rate-limit data.
 
 ## Commands
 
 ```bash
-node ./src/index.js tui            # Interactive terminal dashboard
-node ./src/index.js tmux-status    # One-line status for tmux status bar
-node ./src/index.js snapshot --json # JSON snapshot of all active agents
-node ./src/index.js install-claude-statusline   # Install Claude statusline bridge
-node ./src/index.js uninstall-claude-statusline # Remove the bridge
+vibe-meter init                    # Interactive setup wizard
+vibe-meter uninstall               # Interactive teardown
+vibe-meter tui                     # Interactive terminal dashboard
+vibe-meter tmux-status             # One-line status for tmux status bar
+vibe-meter snapshot --json         # JSON snapshot of all active agents
+vibe-meter install-claude-statusline   # Install Claude statusline bridge
+vibe-meter uninstall-claude-statusline # Remove the bridge
 ```
 
 ## Architecture
@@ -26,10 +28,13 @@ node ./src/index.js uninstall-claude-statusline # Remove the bridge
 - **`src/utils.js`** — Pure utility functions (duration formatting, semver comparison, JSON parsing)
 - **`src/tui.js`** — Terminal UI dashboard
 - **`src/install-claude-statusline.js`** — Installs/uninstalls the Claude statusline bridge script
+- **`src/tmux.js`** — Pure tmux config helpers (detect/append/remove marker blocks)
+- **`src/init.js`** — Interactive setup wizard (Clack-powered)
+- **`src/uninstall.js`** — Interactive teardown wizard (Clack-powered)
 
 ## Conventions
 
-- **Zero dependencies** — only Node.js built-ins (`fs`, `path`, `os`, `child_process`). Do not add npm dependencies.
+- **Minimal dependencies** — `@clack/prompts` is the sole production dependency (used only by init/uninstall). Core monitoring commands use only Node.js built-ins.
 - **ES modules** — all files use `import`/`export` (package.json has `"type": "module"`)
 - **Node >= 22** required
 - **Tests** — run with `node --test` (Node's built-in test runner). Test files live in `tests/`.

@@ -8,16 +8,16 @@ import { runInit } from "./init.js";
 import { runUninstall } from "./uninstall.js";
 
 function helpText() {
-  return `usage-monitor
+  return `vibe-meter
 
 Commands:
-  usage-monitor init                              Interactive setup wizard
-  usage-monitor uninstall                         Interactive teardown
-  usage-monitor tui                               Terminal dashboard
-  usage-monitor tmux-status [--max-age=<ms>] [--no-cache]  Tmux status line
-  usage-monitor snapshot [--json]                  Snapshot of active agents
-  usage-monitor install-claude-statusline          Install Claude bridge (non-interactive)
-  usage-monitor uninstall-claude-statusline         Remove Claude bridge (non-interactive)
+  vibe-meter init                              Interactive setup wizard
+  vibe-meter uninstall                         Interactive teardown
+  vibe-meter tui                               Terminal dashboard
+  vibe-meter tmux-status [--max-age=<ms>] [--no-cache]  Tmux status line
+  vibe-meter snapshot [--json]                  Snapshot of active agents
+  vibe-meter install-claude-statusline          Install Claude bridge (non-interactive)
+  vibe-meter uninstall-claude-statusline         Remove Claude bridge (non-interactive)
 `;
 }
 

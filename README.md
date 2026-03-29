@@ -1,4 +1,4 @@
-# usage-monitor
+# vibe-meter
 
 A Node.js CLI that monitors live Claude Code and Codex sessions from the terminal.
 
@@ -21,26 +21,26 @@ The interactive setup wizard will walk you through:
 
 1. **Claude statusline bridge** — live 5h and 7d usage data from Claude Code
 2. **Tmux integration** — usage stats in your tmux status bar
-3. **Global command** — makes `usage-monitor` available from anywhere
+3. **Global command** — makes `vibe-meter` available from anywhere
 
 ## Commands
 
 ```bash
 # Interactive setup / teardown
-usage-monitor init
-usage-monitor uninstall
+vibe-meter init
+vibe-meter uninstall
 
 # Terminal dashboard
-usage-monitor tui
+vibe-meter tui
 
 # Tmux status bar output
-usage-monitor tmux-status
+vibe-meter tmux-status
 
 # JSON snapshot of all active agents
-usage-monitor snapshot --json
+vibe-meter snapshot --json
 ```
 
-If you haven't run `usage-monitor init` to set up the global command, prefix with `node ./src/index.js`:
+If you haven't run `vibe-meter init` to set up the global command, prefix with `node ./src/index.js`:
 
 ```bash
 node ./src/index.js tui
@@ -63,7 +63,7 @@ Claude Code must be `2.1.80` or newer for the status line to include `rate_limit
 Add this to your `~/.tmux.conf`:
 
 ```tmux
-set -g status-right '#(usage-monitor tmux-status)'
+set -g status-right '#(vibe-meter tmux-status)'
 set -g status-interval 2
 ```
 
@@ -76,7 +76,7 @@ tmux source-file ~/.tmux.conf
 ## Uninstall
 
 ```bash
-usage-monitor uninstall
+vibe-meter uninstall
 ```
 
 This interactively removes the Claude bridge, tmux config block, and global command.
