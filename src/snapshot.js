@@ -55,7 +55,7 @@ export function buildSnapshot({ now = Date.now(), fallbackSnapshot = null } = {}
     refreshedAt: new Date(now).toISOString(),
     agents,
     aggregateUsage: {
-      claude: aggregateUsage(agents, "claude"),
+      claude: claude.accountUsage.length ? claude.accountUsage : aggregateUsage(agents, "claude"),
       codex: aggregateUsage(agents, "codex")
     },
     warnings: [...claude.warnings, ...codex.warnings]

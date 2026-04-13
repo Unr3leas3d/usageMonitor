@@ -327,5 +327,8 @@ export function collectClaudeAgents(processes, now = Date.now()) {
     });
   }
 
-  return { agents, warnings };
+  const latestUsageSnapshot = statusSnapshots.ordered.find((snapshot) => snapshot.rate_limits) || null;
+  const accountUsage = normalizeClaudeUsage(latestUsageSnapshot, now);
+
+  return { agents, warnings, accountUsage };
 }
