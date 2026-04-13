@@ -40,13 +40,29 @@ export function getClaudePaths() {
   };
 }
 
+export function findLatestLogsDb(codexRoot) {
+  try {
+    const entries = fs.readdirSync(codexRoot);
+    const logsFiles = entries
+      .filter((name) => /^logs_\d+\.sqlite$/.test(name))
+      .sort((a, b) => {
+        const numA = Number.parseInt(a.match(/\d+/)[0], 10);
+        const numB = Number.parseInt(b.match(/\d+/)[0], 10);
+        return numB - numA;
+      });
+    return logsFiles.length > 0 ? path.join(codexRoot, logsFiles[0]) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function getCodexPaths() {
   const root = path.join(os.homedir(), ".codex");
 
   return {
     root,
     sessionsDir: path.join(root, "sessions"),
-    logsDbPath: path.join(root, "logs_1.sqlite"),
+    logsDbPath: findLatestLogsDb(root),
     logDir: path.join(root, "log"),
     configPath: path.join(root, "config.toml")
   };

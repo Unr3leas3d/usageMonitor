@@ -41,7 +41,7 @@ export function parseMaxAge(args) {
 
 function formatRuntimeSummary(label, windows) {
   if (!windows?.length) {
-    return `${label} n/a`;
+    return null;
   }
 
   return `${label} ${windows.map((window) => {
@@ -61,7 +61,7 @@ function renderTmuxStatus(snapshot) {
     formatRuntimeSummary("Claude", snapshot.aggregateUsage.claude),
     formatRuntimeSummary("Codex", snapshot.aggregateUsage.codex),
     `${snapshot.agents.length} active`
-  ].join(" | ");
+  ].filter(Boolean).join(" | ");
 }
 
 async function main() {

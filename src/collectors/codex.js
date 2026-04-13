@@ -12,7 +12,7 @@ import { formatUsageWindowLabel, parseJson } from "../utils.js";
 function querySqlite(databasePath, query) {
   return execFileSync(
     "sqlite3",
-    ["-readonly", "-separator", "\t", databasePath, query],
+    ["-separator", "\t", databasePath, query],
     {
       encoding: "utf8",
       maxBuffer: 10 * 1024 * 1024,
@@ -28,7 +28,7 @@ function extractPidFromProcessUuid(processUuid) {
 
 function loadLiveCodexThreads() {
   const { logsDbPath } = getCodexPaths();
-  if (!pathExists(logsDbPath)) {
+  if (!logsDbPath || !pathExists(logsDbPath)) {
     return [];
   }
 
