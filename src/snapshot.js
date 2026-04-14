@@ -40,6 +40,10 @@ export function shouldReuseCachedSnapshot(snapshot, cachedSnapshot, now = Date.n
   return ageMs >= 0 && ageMs <= EMPTY_SNAPSHOT_GRACE_MS;
 }
 
+export function selectAggregateUsage(accountUsage, agents, runtime) {
+  return accountUsage.length ? accountUsage : aggregateUsage(agents, runtime);
+}
+
 export function buildSnapshot({ now = Date.now(), fallbackSnapshot = null } = {}) {
   const processes = listProcesses();
   const claude = collectClaudeAgents(processes, now);
@@ -55,8 +59,8 @@ export function buildSnapshot({ now = Date.now(), fallbackSnapshot = null } = {}
     refreshedAt: new Date(now).toISOString(),
     agents,
     aggregateUsage: {
-      claude: claude.accountUsage.length ? claude.accountUsage : aggregateUsage(agents, "claude"),
-      codex: aggregateUsage(agents, "codex")
+      claude: selectAggregateUsage(claude.accountUsage, agents, "claude"),
+      codex: selectAggregateUsage(codex.accountUsage, agents, "codex")
     },
     warnings: [...claude.warnings, ...codex.warnings]
   };

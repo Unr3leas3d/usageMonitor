@@ -46,11 +46,9 @@ function formatRuntimeSummary(label, windows) {
 
   return `${label} ${windows.map((window) => {
     const pct = window.usedPct != null ? Math.round(window.usedPct) + "%" : "-%";
-    if (window.usedPct != null && window.usedPct >= 100) {
-      const countdown = formatResetCountdown(window.resetsAt);
-      if (countdown) {
-        return `${window.label} ${pct} (${countdown})`;
-      }
+    const countdown = formatResetCountdown(window.resetsAt);
+    if (countdown) {
+      return `${window.label} ${pct} (${countdown})`;
     }
     return `${window.label} ${pct}`;
   }).join(" ")}`;

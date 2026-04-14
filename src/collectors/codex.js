@@ -196,6 +196,11 @@ export function collectCodexAgents(processes) {
   const processMap = new Map(processes.map((process) => [process.pid, process]));
   const agents = [];
 
+  // Rate limits are account-wide, not per-session. Collect activity from all
+  // live agents, then pick the freshest rate-limit snapshot (like Claude does
+  // via its statusline bridge) and apply it to every agent.
+  const activities = [];
+
   for (const liveThread of liveThreads) {
     const process = processMap.get(liveThread.pid);
     if (!process) {
@@ -210,6 +215,8 @@ export function collectCodexAgents(processes) {
     if (!transcriptPath) {
       warnings.push(`Codex pid ${liveThread.pid} thread ${liveThread.threadId} has no transcript path`);
     }
+
+    activities.push({ activity, lastEventAt: activity.lastEventAt || liveThread.ts });
 
     agents.push({
       runtime: "codex",
@@ -233,5 +240,22 @@ export function collectCodexAgents(processes) {
     });
   }
 
-  return { agents, warnings };
+  // Rate limits are account-wide. Pick the freshest snapshot across all live
+  // sessions, mirroring how Claude returns accountUsage from its statusline bridge.
+  const freshest = activities
+    .filter((a) => a.activity.rateLimits)
+    .sort((a, b) => b.lastEventAt - a.lastEventAt)[0];
+
+  const accountUsage = freshest
+    ? normalizeCodexUsage(freshest.activity.rateLimits)
+    : [];
+
+  // Apply shared rate limits to all agents (like Claude does per-agent).
+  if (accountUsage.length) {
+    for (const agent of agents) {
+      agent.usage = accountUsage;
+    }
+  }
+
+  return { agents, warnings, accountUsage };
 }

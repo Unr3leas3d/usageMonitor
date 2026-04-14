@@ -1,7 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { hasSnapshotSignal, shouldReuseCachedSnapshot, shouldUseCachedSnapshot } from "../src/snapshot.js";
+import {
+  hasSnapshotSignal,
+  selectAggregateUsage,
+  shouldReuseCachedSnapshot,
+  shouldUseCachedSnapshot
+} from "../src/snapshot.js";
 
 test("hasSnapshotSignal detects agents and usage windows", () => {
   assert.equal(hasSnapshotSignal({ agents: [{ runtime: "codex" }] }), true);
@@ -119,4 +124,29 @@ test("shouldUseCachedSnapshot rejects recent snapshots with no signal", () => {
   };
 
   assert.equal(shouldUseCachedSnapshot(cachedSnapshot, now, 4_000), false);
+});
+
+test("selectAggregateUsage prefers collector account usage over agent aggregation", () => {
+  const collectorUsage = [{ label: "5h", usedPct: 3 }];
+  const agents = [
+    {
+      runtime: "codex",
+      lastEventAt: Date.parse("2026-03-21T03:20:00.000Z"),
+      usage: []
+    }
+  ];
+
+  assert.deepEqual(selectAggregateUsage(collectorUsage, agents, "codex"), collectorUsage);
+});
+
+test("selectAggregateUsage falls back to aggregating agent usage", () => {
+  const agents = [
+    {
+      runtime: "codex",
+      lastEventAt: Date.parse("2026-03-21T03:20:00.000Z"),
+      usage: [{ label: "5h", usedPct: 3, windowMinutes: 300 }]
+    }
+  ];
+
+  assert.deepEqual(selectAggregateUsage([], agents, "codex"), agents[0].usage);
 });

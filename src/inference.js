@@ -144,15 +144,48 @@ export function inferCodexState(activity, now = Date.now()) {
   return { state: "waiting_for_input", currentTool: null, summary: null };
 }
 
+function normalizeResetTs(resetsAt) {
+  if (!resetsAt) {
+    return NaN;
+  }
+  return typeof resetsAt === "number"
+    ? (resetsAt < 1e12 ? resetsAt * 1000 : resetsAt)
+    : new Date(resetsAt).getTime();
+}
+
 function windowExpired(resetsAt, now) {
   if (!resetsAt) {
     return false;
   }
 
-  const ts = typeof resetsAt === "number"
-    ? (resetsAt < 1e12 ? resetsAt * 1000 : resetsAt)
-    : new Date(resetsAt).getTime();
+  const ts = normalizeResetTs(resetsAt);
   return Number.isFinite(ts) && now > ts;
+}
+
+/**
+ * If resetsAt is in the past, roll it forward by windowMinutes increments
+ * until it's in the future. Returns epoch-seconds (matching Codex/Claude format)
+ * or the original resetsAt if no rolling is needed.
+ */
+function rollForwardReset(resetsAt, windowMinutes, now) {
+  if (!resetsAt || !windowMinutes) {
+    return resetsAt;
+  }
+
+  const tsMs = normalizeResetTs(resetsAt);
+  if (!Number.isFinite(tsMs) || tsMs > now) {
+    return resetsAt;
+  }
+
+  const windowMs = windowMinutes * 60_000;
+  const elapsed = now - tsMs;
+  const periods = Math.ceil(elapsed / windowMs);
+  const nextTsMs = tsMs + periods * windowMs;
+
+  // Return in the same unit as input (seconds if < 1e12, else ms)
+  return typeof resetsAt === "number" && resetsAt < 1e12
+    ? Math.round(nextTsMs / 1000)
+    : nextTsMs;
 }
 
 export function normalizeClaudeUsage(bridgeSnapshot, now = Date.now()) {
@@ -167,7 +200,7 @@ export function normalizeClaudeUsage(bridgeSnapshot, now = Date.now()) {
           usedPct: windowExpired(bridgeSnapshot.rate_limits.five_hour.resets_at, now)
             ? null
             : bridgeSnapshot.rate_limits.five_hour.used_percentage ?? null,
-          resetsAt: bridgeSnapshot.rate_limits.five_hour.resets_at ?? null,
+          resetsAt: rollForwardReset(bridgeSnapshot.rate_limits.five_hour.resets_at, 300, now) ?? null,
           windowMinutes: 300,
           source: "claude-statusline"
         }
@@ -178,7 +211,7 @@ export function normalizeClaudeUsage(bridgeSnapshot, now = Date.now()) {
           usedPct: windowExpired(bridgeSnapshot.rate_limits.seven_day.resets_at, now)
             ? null
             : bridgeSnapshot.rate_limits.seven_day.used_percentage ?? null,
-          resetsAt: bridgeSnapshot.rate_limits.seven_day.resets_at ?? null,
+          resetsAt: rollForwardReset(bridgeSnapshot.rate_limits.seven_day.resets_at, 10080, now) ?? null,
           windowMinutes: 10080,
           source: "claude-statusline"
         }
@@ -186,7 +219,7 @@ export function normalizeClaudeUsage(bridgeSnapshot, now = Date.now()) {
   ].filter(Boolean);
 }
 
-export function normalizeCodexUsage(rateLimits) {
+export function normalizeCodexUsage(rateLimits, now = Date.now()) {
   if (!rateLimits) {
     return [];
   }
@@ -196,7 +229,7 @@ export function normalizeCodexUsage(rateLimits) {
     .map((window) => ({
       label: formatUsageWindowLabel(window.window_minutes),
       usedPct: window.used_percent ?? null,
-      resetsAt: window.resets_at ?? null,
+      resetsAt: rollForwardReset(window.resets_at, window.window_minutes, now) ?? null,
       windowMinutes: window.window_minutes ?? null,
       source: "codex-transcript"
     }));

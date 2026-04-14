@@ -45,11 +45,9 @@ function formatUsageWindows(windows) {
 
   return windows.map((window) => {
     const pct = window.usedPct != null ? Math.round(window.usedPct) + "%" : "-%";
-    if (window.usedPct != null && window.usedPct >= 100) {
-      const countdown = formatResetCountdown(window.resetsAt);
-      if (countdown) {
-        return `${window.label} ${pct} (${countdown})`;
-      }
+    const countdown = formatResetCountdown(window.resetsAt);
+    if (countdown) {
+      return `${window.label} ${pct} (${countdown})`;
     }
     return `${window.label} ${pct}`;
   }).join(" ");
@@ -116,13 +114,10 @@ function buildDetails(snapshot, selectedIndex, showRaw, width) {
     `usage: ${agent.usage.map((window) => {
       const pct = window.usedPct != null ? Math.round(window.usedPct) + "%" : "-%";
       const resetTs = formatResetTimestamp(window.resetsAt);
-      if (window.usedPct != null && window.usedPct >= 100) {
-        const countdown = formatResetCountdown(window.resetsAt);
-        return countdown
-          ? `${window.label} ${pct} resets ${countdown} (${resetTs})`
-          : `${window.label} ${pct} reset ${resetTs}`;
-      }
-      return `${window.label} ${pct} reset ${resetTs}`;
+      const countdown = formatResetCountdown(window.resetsAt);
+      return countdown
+        ? `${window.label} ${pct} resets ${countdown} (${resetTs})`
+        : `${window.label} ${pct} reset ${resetTs}`;
     }).join(" | ") || "n/a"}`
   ];
 
